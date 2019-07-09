@@ -64,6 +64,27 @@ test('It should emit "enter" event when the component is intersected', async () 
   expect(spy).toHaveBeenCalledTimes(1)
 })
 
+test('It should not emit "enter" event when the component is disabled', async () => {
+  const mockedIntersect = Object.assign({}, Intersect)
+  const spy = jest.fn()
+
+  const vm = new Vue({
+    template: `<intersect @enter="onEnter" :disabled="true"><div></div></intersect>`,
+    components: {Intersect: mockedIntersect},
+    methods: {
+      onEnter: spy
+    }
+  }).$mount()
+
+  await vm.$nextTick()
+
+  vm._vnode.componentInstance.observer.cb([{
+    isIntersecting: true
+  }])
+
+  expect(spy).toHaveBeenCalledTimes(0)
+})
+
 test('It should emit "leave" event when the component is not intersected', async () => {
   const mockedIntersect = Object.assign({}, Intersect)
   const spy = jest.fn()
